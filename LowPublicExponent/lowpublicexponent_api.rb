@@ -2,6 +2,8 @@
 #https://en.wikipedia.org/wiki/Coppersmith's_Attack
 #http://www.cims.nyu.edu/~regev/teaching/lattices_fall_2004/ln/rsa.pdf
 
+require 'openssl'
+
 class LowPublicExponent
   #REF http://stackoverflow.com/questions/15529205/ruby-sqrt-on-a-very-large-integer-cause-rounding-issues
   def cuberoot a
@@ -32,6 +34,7 @@ class LowPublicExponent
   end
 
   class Trivial < LowPublicExponent
+    #The case when m^e is less than N
     def initialize(c=nil)
       @C = c
     end
@@ -40,19 +43,83 @@ class LowPublicExponent
       @C = readfiletoint(file)
     end
 
-    def Exploit
+    def exploit
       raise "No input ciphertext" if @C.nil?
       return inttostring(cuberoot(@C))
     end
   end
   
-  class CRT < LowPublicExponent
-    def initialize()
+  class HastadBroadcastAttack < LowPublicExponent
+    def initialize(*cn)
+        @N, @C = [], []
+      cn.each do |cn|
+        @N << cn[1] 
+        @C << cn[0]
+      end
     end
+
+    def cipherin(file)
+      @C << readfiletoint(file)
+    end
+
+    def modulusin(file)
+      rsa = OpenSSL::PKey::RSA.new File.read(file)
+      @N << rsa.params["n"].to_i
+    end
+
+    def exploit
+      raise "Bad Argument" if sanitycheck() == false
+      #crt(@C, @N)
+      inttostring(cuberoot(crt(@C, @N)))
+    end
+
+  private
+    def crt(remainders, mods) 
+      max = mods.inject(1, :*)
+      sum = 0
+      remainders.zip(mods).each do |r, m|
+        sum += (r*(max/m)*invmod(max/m, m))
+      end
+      return sum % max
+    end
+
+    def extended_gcd(a, b)
+      last_remainder, remainder = a.abs, b.abs
+      x, last_x, y, last_y = 0, 1, 1, 0
+      while remainder != 0
+        last_remainder, (quotient, remainder) = remainder, last_remainder.divmod(remainder)
+        x, last_x = last_x - quotient*x, x
+        y, last_y = last_y - quotient*y, y
+      end
+      return last_remainder, last_x * (a < 0 ? -1 : 1)
+    end
+ 
+    def invmod(e, et)
+      g, x = extended_gcd(e, et)
+      if g != 1
+        raise 'Teh maths are broken!'
+      end
+      x % et
+    end
+
+    def sanitycheck
+      return false if @N.length != @C.length
+      @N.zip(@C) do |n,c|
+        return false if n <= c
+      end
+      return true
+    end
+
   end
 end
 
-#p LowPublicExponent.new.cuberoot(85128828301142484868936198256769000)
-#a = LowPublicExponent::Trivial.new
-#a.input("./ciphertext.txt")
-#p a.Exploit
+=begin
+a = LowPublicExponent::HastadBroadcastAttack.new
+a.cipherin("ciphertext.txt")
+a.cipherin("ciphertext1.txt")
+a.cipherin("ciphertext2.txt")
+a.modulusin("priv.pem")
+a.modulusin("priv1.pem")
+a.modulusin("priv2.pem")
+p a.exploit
+=end

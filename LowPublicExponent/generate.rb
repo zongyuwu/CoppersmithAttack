@@ -4,6 +4,8 @@ require 'openssl'
 require 'base64'
 
 Plaintext = "./plaintext.txt"
+Ciphertext = "./ciphertext2.txt"
+PrivateKey = "./priv2.pem"
 
 class Gen
   def initialize(e, bit)
@@ -15,11 +17,11 @@ class Gen
   end
 
   def writepri
-    File.open("./priv.pem", "w") { |f| f.write(@rsa.to_pem) }
+    File.open(PrivateKey, "w") { |f| f.write(@rsa.to_pem) }
   end
 
   def writecip
-    File.open("./ciphertext.txt", "w") { |f| f.write(@C) }
+    File.open(Ciphertext, "w") { |f| f.write(@C) }
   end
 
   def enc
@@ -33,7 +35,7 @@ class Gen
   end
 
   def dec
-    c = readtext("./ciphertext.txt")
+    c = readtext(Ciphertext)
     p = c.to_bn.mod_exp(@rsa.params["d"].to_i, @N).to_i
     p_chr = ""
     until p == 0
@@ -49,7 +51,7 @@ class Gen
   end
 end
 
-s = Gen.new(3, 1024)
+s = Gen.new(3, 128)
 s.writepri
 s.writecip
-s.dec
+#s.dec

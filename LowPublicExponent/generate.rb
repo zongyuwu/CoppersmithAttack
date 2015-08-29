@@ -4,8 +4,8 @@ require 'openssl'
 require 'base64'
 
 Plaintext = "./plaintext.txt"
-Ciphertext = "./ciphertext2.txt"
-PrivateKey = "./priv2.pem"
+Ciphertext = "./ciphertext3.txt"
+PrivateKey = "./priv3.pem"
 
 class Gen
   def initialize(e, bit)
@@ -51,7 +51,7 @@ class Gen
   end
 end
 
-s = Gen.new(3, 128)
+s = Gen.new(3, 1024)
 s.writepri
 s.writecip
 #s.dec

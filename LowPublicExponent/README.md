@@ -1,8 +1,8 @@
-***Introduction***
+**Introduction**  
 Håstad's Broadcast Attack is used when e is small and no padding.  
 Read REF for futher information  
 
-***Tool***
+**Tool**
 * Trival case  
   * Read ciphertext from file  
   `./lowpublicexponent.rb -t -f "(ciphrtext3.txt,)"`  
@@ -16,7 +16,7 @@ Read REF for futher information
   `./lowpublicexponent.rb -i "(c1 in int),(n1 in int),(c2 in int,n2 in int)....."`  
 
 
-***API***
+**API**
 * When m^e is smaller than modulus N. Using trivial to solve  
 Usage  
 ```ruby
@@ -45,8 +45,8 @@ Usage
 
 
 
-REF
+REF  
 http://www.cims.nyu.edu/~regev/teaching/lattices_fall_2004/ln/rsa.pdf  
 https://en.wikipedia.org/wiki/Coppersmith's_Attack  
 http://crypto.stackexchange.com/questions/6713/low-public-exponent-attack-for-rsa  
-https://en.wikipedia.org/wiki/Chinese_remainder_theorem#Existence  
+ttps://en.wikipedia.org/wiki/Chinese_remainder_theorem#Existence  

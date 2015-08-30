@@ -51,11 +51,11 @@ class LowPublicExponent
   end
   
   class HastadBroadcastAttack < LowPublicExponent
-    def initialize(*cn)
-        @N, @C = [], []
-      cn.each do |cn|
-        @N << cn[1] 
-        @C << cn[0]
+    def initialize(cn)
+      @N, @C = [], []
+      cn.each do |v|
+        @N << v[1].to_i
+        @C << v[0].to_i
       end
     end
 
@@ -155,8 +155,9 @@ class ARGVParser
 private
   def file
     farr = []
-    @@options[:F].gsub(/\s+/, "").split(/\),\(/).each do |v|
-      farr << v.sub(/\(/, "").sub(/\)/, "").split(/,/)
+    @@options[:F].gsub(/\s+/, "").scan(/\(.+?\)/) do |v| 
+      p = v.scan(/[[[:word:]]\.]+/)
+      farr << [p[0], p[1]]
     end
     #p farr
     return farr
@@ -164,8 +165,9 @@ private
 
   def input
     iarr = []
-    @@options[:I].gsub(/\s+/, "").split(/\),\(/).each do |v|
-      iarr << v.sub(/\(/, "").sub(/\)/, "").split(/,/)
+    @@options[:I].gsub(/\s+/, "").scan(/\(.+?\)/).each do |v|
+      p = v.scan(/[[:digit:]]+/)
+      iarr << [p[0], p[1]]
     end
     #p iarr
     return iarr
@@ -193,7 +195,7 @@ if opts.options[:T]
   end
 else
   if opts.options[:F].nil?
-    p LowPublicExponent::HastadBroadcastAttack.new(opts.iarr)
+    p LowPublicExponent::HastadBroadcastAttack.new(opts.iarr).exploit
   else
     a = LowPublicExponent::HastadBroadcastAttack.new
     opts.farr.each do |v|

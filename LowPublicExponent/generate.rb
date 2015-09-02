@@ -3,9 +3,15 @@
 require 'openssl'
 require 'base64'
 
-Plaintext = "./plaintext.txt"
-Ciphertext = "./ciphertext3.txt"
-PrivateKey = "./priv3.pem"
+Test_dir = "./test/"
+Plaintext = "plaintext.txt"
+Ciphertext = "ciphertext3.txt"
+PrivateKey = "priv3.pem"
+
+Plaintext.map! { |v| v="#{Test_dir}#{v}" }
+Ciphertext.map! { |v| v = "#{Test_dir}#{v}" }
+PrivateKey.map! { |v| v="#{Test_dir}#{v}" }
+
 
 class Gen
   def initialize(e, bit)

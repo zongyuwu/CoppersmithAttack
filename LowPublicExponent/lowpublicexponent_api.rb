@@ -50,11 +50,13 @@ class LowPublicExponent
   end
   
   class HastadBroadcastAttack < LowPublicExponent
-    def initialize(*cn)
-        @N, @C = [], []
-      cn.each do |cn|
-        @N << cn[1] 
-        @C << cn[0]
+    def initialize(cn=nil)
+      @N, @C = [], []
+      if !cn.nil?
+        cn.each do |cn|
+          @N << cn[1] 
+          @C << cn[0]
+        end
       end
     end
 

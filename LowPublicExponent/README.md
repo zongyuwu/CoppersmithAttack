@@ -4,12 +4,14 @@ Read REF for futher information
 
 **Tool**
 * Trival case  
+* When m^e is smaller than modulus N. Using trivial to solve  
   * Read ciphertext from file  
   `./lowpublicexponent.rb -t -f "(ciphrtext3.txt,)"`  
   * Read ciphertext from argv (need to be an integer)
   `./lowpublicexponent.rb -t -i "(1123130932,)"`  
 
 * Hastad case  
+* When m^e is bigger than modulus N. But you have C1, C2... and N1, N2..
   * Read ciphertext and modulus from file  
   `./lowpublicexponent.rb -f "(ciphertext.txt,pub.pem),(ciphertext1.txt,pub1.pem),(ciphertext2.txt,pub2.pem)....."`  
   * Read ciphretext and modulus from argv (need to be an integer)  
@@ -17,6 +19,7 @@ Read REF for futher information
 
 
 **API**
+* Trival case  
 * When m^e is smaller than modulus N. Using trivial to solve  
 Usage  
 ```ruby
@@ -28,6 +31,7 @@ Usage
   p a.exploit(e)
 
 ```  
+* Hastad case  
 * When m^e is bigger than modulus N. But you have C1, C2... and N1, N2..
 
 ```ruby
@@ -49,4 +53,4 @@ REF
 http://www.cims.nyu.edu/~regev/teaching/lattices_fall_2004/ln/rsa.pdf  
 https://en.wikipedia.org/wiki/Coppersmith's_Attack  
 http://crypto.stackexchange.com/questions/6713/low-public-exponent-attack-for-rsa  
-ttps://en.wikipedia.org/wiki/Chinese_remainder_theorem#Existence  
+https://en.wikipedia.org/wiki/Chinese_remainder_theorem#Existence  

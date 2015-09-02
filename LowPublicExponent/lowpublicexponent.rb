@@ -51,11 +51,13 @@ class LowPublicExponent
   end
   
   class HastadBroadcastAttack < LowPublicExponent
-    def initialize(cn)
+    def initialize(cn=nil)
       @N, @C = [], []
-      cn.each do |v|
-        @N << v[1].to_i
-        @C << v[0].to_i
+      if !cn.nil?
+        cn.each do |v|
+          @N << v[1].to_i
+          @C << v[0].to_i
+        end
       end
     end
 
@@ -156,7 +158,7 @@ private
   def file
     farr = []
     @@options[:F].gsub(/\s+/, "").scan(/\(.+?\)/) do |v| 
-      p = v.scan(/[[[:word:]]\.]+/)
+      p = v.scan(/[[[:word:]]\.\/]+/)
       farr << [p[0], p[1]]
     end
     #p farr

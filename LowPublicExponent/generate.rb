@@ -4,30 +4,29 @@ require 'openssl'
 require 'base64'
 
 Test_dir = "./test/"
-Plaintext = "plaintext.txt"
-Ciphertext = "ciphertext3.txt"
-PrivateKey = "priv3.pem"
+Plaintext_tri = "#{Test_dir}plaintext_tri.txt"
+Ciphertext_tri = "#{Test_dir}ciphertext_tri.txt"
+PrivateKey_tri = "#{Test_dir}priv_tri.pem"
 
-Plaintext.map! { |v| v="#{Test_dir}#{v}" }
-Ciphertext.map! { |v| v = "#{Test_dir}#{v}" }
-PrivateKey.map! { |v| v="#{Test_dir}#{v}" }
-
+Plaintext = "#{Test_dir}plaintext.txt"
+Ciphertext = ["ciphertext1.txt", "ciphertext2.txt", "ciphertext3.txt"].map! { |v| v = "#{Test_dir}#{v}" }
+PrivateKey = ["priv1.pem", "priv2.pem", "priv3.pem"].map! { |v| v = "#{Test_dir}#{v}" }
 
 class Gen
-  def initialize(e, bit)
+  def initialize(e, bit, pt)
     @rsa = OpenSSL::PKey::RSA.new(bit, e)
     @N = @rsa.params["n"].to_i
-    @M = readtext(Plaintext)
+    @M = readtext(pt)
     @E = e.to_i
     @C = enc
   end
 
-  def writepri
-    File.open(PrivateKey, "w") { |f| f.write(@rsa.to_pem) }
+  def writepri(fpriv)
+    File.open(fpriv, "w") { |f| f.write(@rsa.to_pem) }
   end
 
-  def writecip
-    File.open(Ciphertext, "w") { |f| f.write(@C) }
+  def writecip(cpriv)
+    File.open(cpriv, "w") { |f| f.write(@C) }
   end
 
   def enc
@@ -57,7 +56,13 @@ class Gen
   end
 end
 
-s = Gen.new(3, 1024)
-s.writepri
-s.writecip
+s = Gen.new(3, 1024, Plaintext_tri)
+s.writepri(PrivateKey_tri)
+s.writecip(Ciphertext_tri)
 #s.dec
+
+PrivateKey.zip(Ciphertext).each do |p, c|
+  s = Gen.new(3, 1024, Plaintext)
+  s.writepri(p)
+  s.writecip(c)
+end
